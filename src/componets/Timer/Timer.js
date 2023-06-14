@@ -1,36 +1,37 @@
 import Button from '../Button/Button';
+import FormattedTime from '../FormattedTime/FormattedTime';
 import styles from './Timer.module.scss';
 import React, { useState, useEffect } from 'react';
 
 const Timer = () => {
   const [time, setTime] = useState(0);
-  const [running, setRunning] = useState(false);
-
+  const [running] = useState(false);
+  const [timer, setTimer] = useState(null);
   useEffect(() => {
-    let interval = null;
+    return () => clearInterval(timer);
+  }, [timer]);
 
-    if (running) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 10);
-      }, 10);
-    } else if (!running) {
-      clearInterval(interval);
+  const handleReset = () => setTime(0);
+  const handleStart = () => {
+    if (!timer) {
+      setTimer(
+        setInterval(() => {
+          setTime((prevTime) => prevTime + 1);
+        }, 1)
+      );
     }
-    return () => clearInterval(interval);
-  }, [running]);
-
+  };
+  const handleStop = () => {
+    clearInterval(timer);
+    setTimer(null);
+  };
   return (
     <div className={styles.timer}>
+      <FormattedTime time={time} />
       <div>
-        <span>{('0' + (Math.floor(time / 3600000) % 24)).slice(-2)}:</span>
-        <span>{('0' + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
-        <span>{('0' + Math.floor((time / 1000) % 60)).slice(-2)}.</span>
-        <span>{('0' + ((time / 10) % 100)).slice(-2)}</span>
-      </div>
-      <div>
-        <Button onClick={() => setRunning(true)}>START</Button>
-        <Button onClick={() => setRunning(false)}>STOP</Button>
-        <Button onClick={() => setTime(0)}>RESET</Button>
+        <Button onClick={handleStart}>START</Button>
+        <Button onClick={handleStop}>STOP</Button>
+        <Button onClick={handleReset}>RESET</Button>
       </div>
     </div>
   );
