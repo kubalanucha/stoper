@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 
 const Timer = () => {
   const [time, setTime] = useState(0);
-  const [running] = useState(false);
+
   const [timer, setTimer] = useState(null);
   useEffect(() => {
     return () => clearInterval(timer);
